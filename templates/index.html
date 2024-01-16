@@ -61,6 +61,7 @@
     
         fabric.Image.fromURL(imageUrl, function(oImg) {
             oImg.set('crossOrigin', 'anonymous'); // Set crossOrigin to anonymous
+            canvas.add(oImg);
             var totalHeight = topRectHeight + oImg.height + bottomRectHeight;
             canvas.setHeight(totalHeight);
     
