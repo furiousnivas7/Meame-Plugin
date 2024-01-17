@@ -13,6 +13,6 @@ def display():
 
     return render_template('index.html', image_url=image_url, text=text,text_bottom=text_bottom, rect_color=rect_color,text_color=text_color)
 
-@app.route('/images/<filename>')
+@app.route('/meme/<filename>')
 def serve_image(filename):
     return send_from_directory('meme', filename)
