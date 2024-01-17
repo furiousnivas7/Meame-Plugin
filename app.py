@@ -3,16 +3,16 @@ from flask import Flask, render_template, request,send_from_directory
 app = Flask(__name__)
 
 @app.route('/')
-def display():
-    # Get data from request parameters
+def index():
+    # Retrieve parameters from the request
     image_url = request.args.get('image_url', '')
-    text = request.args.get('text', '')
-    rect_color = request.args.get('rect_color', '#000000')  # Default to white if not provided
-    text_bottom = request.args.get('text', '')
-    text_color= request.args.get('rect_color', '#FFFFFF')
+    top_text = request.args.get('top_text', )  # Default value is 'Top Text'
+    bottom_text = request.args.get('bottom_text',)  # Default value is 'Bottom Text'
+    rect_color = request.args.get('rect_color', '#000000')  # Default rect color
 
-    return render_template('index.html', image_url=image_url, text=text,text_bottom=text_bottom, rect_color=rect_color,text_color=text_color)
+    # Pass the parameters to the template
+    return render_template('index.html', image_url=image_url, top_text=top_text, bottom_text=bottom_text, rect_color=rect_color)
 
-@app.route('/meme/<filename>')
+@app.route('/images/<filename>')
 def serve_image(filename):
-    return send_from_directory('meme', filename)
+    return send_from_directory('vadivel', filename)
