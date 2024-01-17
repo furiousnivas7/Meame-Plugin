@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/display')
+@app.route('/')
 def display():
     # Get data from request parameters
     image_url = request.args.get('image_url', '')
@@ -13,5 +13,4 @@ def display():
 
     return render_template('index.html', image_url=image_url, text=text,text_bottom=text_bottom, rect_color=rect_color,text_color=text_color)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
