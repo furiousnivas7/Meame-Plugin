@@ -13,6 +13,6 @@ def index():
     # Pass the parameters to the template
     return render_template('index.html', image_url=image_url, top_text=top_text, bottom_text=bottom_text, rect_color=rect_color)
 
-@app.route('/images/<filename>')
+@app.route('/meme/<filename>')
 def serve_image(filename):
-    return send_from_directory('vadivel', filename)
+    return send_from_directory('meme', filename)
