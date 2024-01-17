@@ -7,104 +7,87 @@
 </head>
 <body>
     <canvas id="canvas" width="800" height="600"></canvas>
-    <button onclick="download()">Download</button>
+    <button id="download-btn">Download</button>
 
     <script>
         var canvas = new fabric.Canvas('canvas');
         var imageUrl = "{{ image_url }}";
-        var textValue = "{{ text }}";
-        var textBottomValue = "{{ text_bottom }}";
+    
+        // Variables passed from Flask
+        var textTopValue = "{{ top_text }}";
+        console.log(textTopValue)
+        var textBottomValue = "{{ bottom_text }}";
         var rectColor = "{{ rect_color }}";
-        var textColor = "{{ text_color }}";
-        var maxWidth = 750; // maximum width of the text box
-
-        var text = new fabric.Text(textValue, {
-            left: 25, // Adjusted for padding
-            fontSize: 20,
-            fill: textColor,
-            width: maxWidth, // Set maximum width for text
-            textAlign: 'center' // Center align text
-        });
-
-        var textBottom = new fabric.Text(textBottomValue, {
-            left: 25, // Adjusted for padding
-            fontSize: 20,
-            fill: textColor,
-            width: maxWidth, // Set maximum width for text
-            textAlign: 'center' // Center align text
-        });
+        var rectHeight = 50; // Height of the rectangles
     
-        // Add text temporarily to measure its size
-        canvas.add(text);
-        canvas.add(textBottom);
-        canvas.renderAll();
-    
-        // Calculate necessary rectangle heights
-        var topRectHeight = text.height + 35; // Add some padding
-        var bottomRectHeight = textBottom.height + 35; // Add some padding
-    
-        var topRect = new fabric.Rect({
-            left: 0,
-            top: 0,
-            fill: rectColor,
-            width: 800,
-            height: topRectHeight
-        });
-    
-        var bottomRect = new fabric.Rect({
-            left: 0,
-            top: 0, // Will be updated after the image is loaded
-            fill: rectColor,
-            width: 800,
-            height: bottomRectHeight
-        });
-    
+        // Function to add image and text to the canvas
         fabric.Image.fromURL(imageUrl, function(oImg) {
-            // oImg.set('crossOrigin', 'anonymous'); // Set crossOrigin to anonymous
-            // canvas.add(oImg);
-            var totalHeight = topRectHeight + oImg.height + bottomRectHeight;
-            canvas.setHeight(totalHeight);
-    
-            oImg.set({
-                left: 0,
-                top: topRectHeight
-            });
-    
-            bottomRect.set({
-                top: topRectHeight + oImg.height
-            });
-    
-            text.set({
-                top: (topRectHeight - text.height) / 2
-            });
-    
-            textBottom.set({
-                top: topRectHeight + oImg.height + (bottomRectHeight - textBottom.height) / 2
-            });
-    
-            // Clear the canvas and add all elements in proper order
-            canvas.clear();
-            canvas.add(topRect);
-            canvas.add(text);
+            // Resize image to fit the canvas
+            oImg.scaleToWidth(canvas.width);
+            oImg.scaleToHeight(canvas.height);
+            oImg.selectable = false;
             canvas.add(oImg);
-            canvas.add(bottomRect);
-            canvas.add(textBottom);
     
+            // Add a top rectangle
+            var topRect = new fabric.Rect({
+                left: 0,
+                top: 0,
+                fill: rectColor,
+                width: canvas.width,
+                height: rectHeight,
+                selectable: false
+            });
+            canvas.add(topRect);
+    
+            var textTop = new fabric.Text(textTopValue, {
+                left: 10, // Adjust as needed
+                top: 10, // Adjust as needed
+                fontSize: 20,
+                fill: 'white' // Change as needed
+            });
+            canvas.add(textTop);
+    
+            // Add a bottom rectangle
+            var bottomRect = new fabric.Rect({
+                left: 0,
+                top: canvas.height - rectHeight,
+                fill: rectColor,
+                width: canvas.width,
+                height: rectHeight,
+                selectable: false
+            });
+            canvas.add(bottomRect);
+    
+            var textBottom = new fabric.Text(textBottomValue, {
+                left: 10, // Adjust as needed
+                top: canvas.height - rectHeight + 10, // Adjust as needed
+                fontSize: 20,
+                fill: 'white' // Change as needed
+            });
+            canvas.add(textBottom);
             canvas.renderAll();
         }, {
             crossOrigin: 'anonymous' // Add this line
         });
     
+        // Function to download the canvas image
         function download() {
-        var link = document.createElement('a');
-        link.download = 'canvas_image.png'; // Name of the downloaded file
-        link.href = canvas.toDataURL('image/png'); // Get the canvas data as a PNG image
-        document.body.appendChild(link); // Append the link to the body
-        link.click(); // Simulate a click on the link to trigger the download
-        document.body.removeChild(link); // Remove the link after triggering the download
-    }
-    </script>
+            var canvasEl = canvas.getElement(); // Get the HTML canvas element from Fabric.js canvas
+            canvasEl.toBlob(function(blob) {
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.download = 'canvas_image.png';
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url); // Clean up the URL object
+            }, 'image/png');
+        }
     
+        // Event listener for the download button
+        document.getElementById('download-btn').addEventListener('click', download);
+    </script>
     
 </body>
 </html>
