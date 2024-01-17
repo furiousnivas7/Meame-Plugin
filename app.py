@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,send_from_directory
 
 app = Flask(__name__)
 
@@ -13,4 +13,6 @@ def display():
 
     return render_template('index.html', image_url=image_url, text=text,text_bottom=text_bottom, rect_color=rect_color,text_color=text_color)
 
-
+@app.route('/images/<filename>')
+def serve_image(filename):
+    return send_from_directory('meme', filename)
